@@ -5,14 +5,12 @@ import (
 	"time"
 )
 
-var ErrAtleastOneHabitIsRequired = Errorf(EINVALID, "At least one habit is required.")
+var ErrHabitNotFound = Errorf(ENOTFOUND, "Habit not found.")
 
-func ErrHabitNotFound(habitId int) *Error {
-	return Errorf(ENOTFOUND, "%q %d %q", "Habit with the given id:", habitId, " not found.")
-}
+type ChainId int
 
 type Chain struct {
-	Id int `json:"id"`
+	Id ChainId `json:"id"`
 
 	// Default to current day
 	Title       string `json:"title"`
@@ -30,24 +28,13 @@ type Chain struct {
 	UpdatedAt *time.Time `json:"updatedAt"`
 }
 
-func CreateChain(id int, title, description string, day time.Time, habits []*Habit) (*Chain, error) {
-	if len(habits) == 0 {
-		return nil, ErrAtleastOneHabitIsRequired
+func CreateChain(id ChainId, title, description string, day time.Time) (*Chain, error) {
+	if title == "" {
+		title = day.Format("02 01 2006")
 	}
 
 	now := time.Now().UTC()
-	if title == "" {
-		title = now.Format("02 01 2006")
-	}
-
-	var progress int
-	for i := 0; i < len(habits); i++ {
-		if habits[i].IsCompleted {
-			progress++
-		}
-	}
-
-	return &Chain{id, title, description, day, progress, habits, now, nil}, nil
+	return &Chain{Id: id, Title: title, Description: description, Day: day, Progress: 0, Habits: nil, CreatedAt: now, UpdatedAt: nil}, nil
 }
 
 func (c *Chain) TotalNumberOfHabits() int {
@@ -60,7 +47,7 @@ func (c *Chain) AddHabit(habit *Habit) {
 	c.UpdatedAt = &now
 }
 
-func (h *Chain) ChangeHabitTitle(habitId int, title string) error {
+func (h *Chain) ChangeHabitTitle(habitId HabitId, title string) error {
 	for _, habit := range h.Habits {
 		if habit.Id == habitId {
 			if err := habit.ChangeTitle(title); err != nil {
@@ -70,10 +57,10 @@ func (h *Chain) ChangeHabitTitle(habitId int, title string) error {
 		}
 	}
 
-	return ErrHabitNotFound(habitId)
+	return ErrHabitNotFound
 }
 
-func (c *Chain) ToggleHabitCompletion(habitId int) error {
+func (c *Chain) ToggleHabitCompletion(habitId HabitId) error {
 	for _, habit := range c.Habits {
 		if habit.Id == habitId {
 			habit.ToggleCompletion()
@@ -86,14 +73,10 @@ func (c *Chain) ToggleHabitCompletion(habitId int) error {
 		}
 	}
 
-	return ErrHabitNotFound(habitId)
+	return ErrHabitNotFound
 }
 
-func (c *Chain) RemoveHabit(habitId int) error {
-	if len(c.Habits) == 1 {
-		return ErrAtleastOneHabitIsRequired
-	}
-
+func (c *Chain) RemoveHabit(habitId HabitId) error {
 	index := -1
 	for i, habit := range c.Habits {
 		if habit.Id == habitId {
@@ -102,7 +85,7 @@ func (c *Chain) RemoveHabit(habitId int) error {
 	}
 
 	if index < 0 {
-		return ErrHabitNotFound(habitId)
+		return ErrHabitNotFound
 	}
 
 	habit := c.Habits[index]

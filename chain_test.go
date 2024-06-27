@@ -1,7 +1,6 @@
 package habheath_test
 
 import (
-	"errors"
 	"strconv"
 	"testing"
 	"time"
@@ -9,31 +8,15 @@ import (
 	"habheath"
 )
 
-func TestCreateChain(t *testing.T) {
-	t.Run("Given valid data creating Chain should succeed", func(t *testing.T) {
-		chainId := 1
-		day := time.Now()
-		chain, err := habheath.CreateChain(chainId, "Test Chain", "Description", day, []*habheath.Habit{createTestHabit(1, chainId)})
-		assertNotError(t, err)
+var now = time.Now().UTC()
 
-		if chain.Id != 1 {
-			t.Errorf("expected id 1, got %d", chain.Id)
-		}
-		if chain.Title != "Test Chain" {
-			t.Errorf("expected title 'Test Chain', got %s", chain.Title)
-		}
-		if chain.Progress != 0 {
-			t.Errorf("expected progress 0, got %d", chain.Progress)
-		}
-		if len(chain.Habits) != 1 {
-			t.Errorf("expected 1 habit, got %d", len(chain.Habits))
-		}
-	})
-	t.Run("Given chain without habit should fail", func(t *testing.T) {
-		day := time.Now()
-		_, err := habheath.CreateChain(1, "Test Chain", "Description", day, nil)
-		assertError(t, err, habheath.ErrAtleastOneHabitIsRequired)
-	})
+func TestCreateChain(t *testing.T) {
+	chain, err := habheath.CreateChain(1, "", "Description", now)
+	assertNotError(t, err)
+	want := now.Format("02 01 2006")
+	if chain.Title != want {
+		t.Errorf("want %q, got %q", want, chain.Title)
+	}
 }
 
 func TestAddHabit(t *testing.T) {
@@ -52,45 +35,52 @@ func TestAddHabit(t *testing.T) {
 	//			}
 	//		})
 	//	}
-	t.Run("Given habit without title should fail", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
-		habitId := len(chain.Habits) + 1
-		_, err := habheath.CreateHabit(habitId, chain.Id, "", false)
+	t.Run("Given empty title add habit should fail", func(t *testing.T) {
+		chain := createTestChain(1)
+		_, err := habheath.CreateHabit(1, chain.Id, "", false)
 		assertError(t, err, habheath.ErrHabitTitleIsRequired)
 	})
 
-	t.Run("Given valid habit should succeed", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
-		habitId := len(chain.Habits) + 1
-		habitTitle := "Habit " + strconv.Itoa(habitId)
-		habit, err := habheath.CreateHabit(habitId, chain.Id, habitTitle, false)
+	t.Run("Given valid data add habit should succeed", func(t *testing.T) {
+		chain := createTestChain(1)
+		habit, err := habheath.CreateHabit(1, chain.Id, "Habit 1", false)
 		assertNotError(t, err)
+
 		chain.AddHabit(habit)
-		if len(chain.Habits) != 2 {
-			t.Errorf("expected 2 habits, got %d", len(chain.Habits))
+		if len(chain.Habits) != 1 {
+			t.Errorf("expected 1 habits, got %d", len(chain.Habits))
 		}
 	})
 }
 
 func TestChangeHabitTitle(t *testing.T) {
-	t.Run("Given invalid habit title should fail", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
+	t.Run("Given empty title change habit title should fail", func(t *testing.T) {
+		chain := createTestChain(1)
+		habit := createTestHabit(1, chain.Id)
+		chain.AddHabit(habit)
+
 		err := chain.ChangeHabitTitle(1, "")
 		assertError(t, err, habheath.ErrInvalidHabitTitle)
 	})
 
-	t.Run("Given valid habit title should succeed", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
+	t.Run("Given valid title change habit title should succeed", func(t *testing.T) {
+		chain := createTestChain(1)
+		habit := createTestHabit(1, chain.Id)
+		chain.AddHabit(habit)
+
 		err := chain.ChangeHabitTitle(1, "Updated Habit 1")
 		assertNotError(t, err)
 		if chain.Habits[0].Title != "Updated Habit 1" {
-			t.Errorf("expected 'Updated Habit 1', got %s", chain.Habits[0].Title)
+			t.Errorf("expected habit title to be %v , got %s", "Updated Habit 1", chain.Habits[0].Title)
 		}
 	})
 }
 
 func TestToggleHabitCompletion(t *testing.T) {
-	chain := createTestChainWithSingleHabit(1)
+	chain := createTestChain(1)
+	habit := createTestHabit(1, chain.Id)
+	chain.AddHabit(habit)
+
 	err := chain.ToggleHabitCompletion(1)
 	assertNotError(t, err)
 
@@ -113,20 +103,15 @@ func TestToggleHabitCompletion(t *testing.T) {
 }
 
 func TestRemoveHabit(t *testing.T) {
-	t.Run("Given chain with single habit removing habit should fail", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
-		err := chain.RemoveHabit(1)
-		assertError(t, err, habheath.ErrAtleastOneHabitIsRequired)
-	})
-	t.Run("Given not existing habit removing habit should fail", func(t *testing.T) {
-		notExistHabitId := 99
-		chain := createTestChainWithSingleHabit(1)
-		chain.AddHabit(createTestHabit(2, chain.Id))
+	t.Run("Given not existing habit remove habit should fail", func(t *testing.T) {
+		notExistHabitId := habheath.HabitId(99)
+		chain := createTestChainWithHabit()
 		err := chain.RemoveHabit(notExistHabitId)
-		assertError(t, err, habheath.ErrHabitNotFound(notExistHabitId))
+		assertError(t, err, habheath.ErrHabitNotFound)
 	})
-	t.Run("Given chain with multiple habits removing habit should succeed", func(t *testing.T) {
-		chain := createTestChainWithSingleHabit(1)
+	t.Run("Given chain with multiple habits remove habit should succeed", func(t *testing.T) {
+		chain := createTestChain(1)
+		chain.AddHabit(createTestHabit(1, chain.Id))
 		chain.AddHabit(createTestHabit(2, chain.Id))
 
 		err := chain.RemoveHabit(1)
@@ -141,28 +126,34 @@ func TestRemoveHabit(t *testing.T) {
 }
 
 func TestChainProgress(t *testing.T) {
-	chain := createTestChainWithSingleHabit(1)
+	chain := createTestChain(1)
+	chain.AddHabit(createTestHabit(1, chain.Id))
 	chain.AddHabit(createTestHabit(2, chain.Id))
 	chain.AddHabit(createTestHabit(3, chain.Id))
-	chain.AddHabit(createTestHabit(4, chain.Id))
-	chain.ToggleHabitCompletion(3)
-	chain.ToggleHabitCompletion(4)
+	chain.ToggleHabitCompletion(1)
+	chain.ToggleHabitCompletion(2)
 	expectedProgress := 2 // Since there are 2 completed habits
 	if chain.Progress != expectedProgress {
 		t.Errorf("expected progress %d, got %d", expectedProgress, chain.Progress)
 	}
 }
 
-func createTestChainWithSingleHabit(chainId int) *habheath.Chain {
-	habitId := 1
-	chain, _ := habheath.CreateChain(chainId, "Test Chain", "Description", time.Now().UTC(), []*habheath.Habit{createTestHabit(habitId, chainId)})
+func createTestChain(chainId habheath.ChainId) *habheath.Chain {
+	chain, _ := habheath.CreateChain(chainId, "Test Chain", "Description", now)
 	return chain
 }
 
-func createTestHabit(id int, chainId int) *habheath.Habit {
-	title := "Habit " + strconv.Itoa(id)
-	habit, _ := habheath.CreateHabit(1, chainId, title, false)
+func createTestHabit(id habheath.HabitId, chainId habheath.ChainId) *habheath.Habit {
+	title := "Habit " + strconv.Itoa(int(id))
+	habit, _ := habheath.CreateHabit(id, chainId, title, false)
 	return habit
+}
+
+func createTestChainWithHabit() *habheath.Chain {
+	chain := createTestChain(1)
+	habit := createTestHabit(1, chain.Id)
+	chain.AddHabit(habit)
+	return chain
 }
 
 // Should not produce error
@@ -180,7 +171,7 @@ func assertError(t testing.TB, got error, want error) {
 		t.Fatal("wanted an error but did not get one")
 	}
 
-	if !errors.Is(got, want) {
+	if got.Error() != want.Error() {
 		t.Errorf("got %q want %q", got, want)
 	}
 }

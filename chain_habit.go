@@ -5,16 +5,18 @@ import "time"
 var ErrInvalidHabitTitle = Errorf(EINVALID, "Invalid habit title.")
 var ErrHabitTitleIsRequired = Errorf(EINVALID, "Title is required.")
 
+type HabitId int
+
 type Habit struct {
-	Id          int       `json:"id"`
-	ChainId     int       `json:"chainid"`
+	Id          HabitId   `json:"id"`
+	ChainId     ChainId   `json:"chainid"`
 	Title       string    `json:"title"`
 	UpdatedAt   time.Time `json:"updatedAt"`
 	IsCompleted bool      `json:"isCompleted"`
 	// TODO: Order       int       `json:"order"`
 }
 
-func CreateHabit(id int, chainId int, title string, isCompleted bool) (*Habit, error) {
+func CreateHabit(id HabitId, chainId ChainId, title string, isCompleted bool) (*Habit, error) {
 	if title == "" {
 		return nil, ErrHabitTitleIsRequired
 	}
