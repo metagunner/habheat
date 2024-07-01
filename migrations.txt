@@ -1,0 +1,22 @@
+GOOSE_MIGRATION_DIR=./sqlite/migration goose sqlite3 ./test.db create init sql
+
+
+
+
+
+
+
+
+
+Get up early
+Mathematics
+- Read AOPS book
+Chess practice
+- solve some puzzle
+- practice openings on blitz games
+- watch game masters and compare your move with the GM's choice
+Read book
+Learn go
+Devmentor course
+Work on the project
+"Process count"
