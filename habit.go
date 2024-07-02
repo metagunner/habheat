@@ -9,16 +9,20 @@ var (
 	ErrInvalidHabitTitle = Errorf(EINVALID, "Invalid habit title.")
 )
 
+type Habit struct {
+	Id          HabitId    `json:"id"`
+	Title       HabitTitle `json:"title"`
+	Day         time.Time  `json:"day"`
+	IsCompleted bool       `json:"is_completed"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+}
+
 type HabitId int
 type HabitTitle string
 
 func CreateHabitTitle(title string) (HabitTitle, error) {
-	if len(title) > 250 {
+	if title == "" || len(title) > 250 {
 		return "", ErrInvalidHabitTitle
-	}
-
-	if title == "" {
-		return HabitTitle(time.Now().UTC().Format(time.DateOnly)), nil
 	}
 
 	return HabitTitle(title), nil
@@ -28,18 +32,9 @@ func (ht HabitTitle) String() string {
 	return string(ht)
 }
 
-type Habit struct {
-	Id          HabitId    `json:"id"`
-	Title       HabitTitle `json:"title"`
-	Day         time.Time  `json:"day"`
-	IsCompleted bool       `json:"is_completed"`
-	UpdatedAt   time.Time  `json:"updated_at"`
-}
-
 func CreateHabit(title HabitTitle, day time.Time, isCompleted bool) (*Habit, error) {
-	now := time.Now().UTC()
 	day = time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, time.UTC)
-	habit := &Habit{Title: title, Day: day, UpdatedAt: now, IsCompleted: false}
+	habit := &Habit{Title: title, Day: day, UpdatedAt: time.Now().UTC(), IsCompleted: isCompleted}
 	return habit, nil
 }
 
@@ -65,14 +60,23 @@ func (h *Habit) ChangeTitle(title string) error {
 
 type HabitService interface {
 	// All the habits for heath map
-	HeatMap(ctx context.Context, year, month int) ([]*HeathMap, int, error)
+	HeatMap(ctx context.Context, year int) ([]*HeathMap, int, error)
 	// Don't break the chain list
-	MontlyChain(ctx context.Context, year, month int) ([]*DontBreakTheChain, int, error)
+	MontlyChain(ctx context.Context, year int) ([]*DontBreakTheChain, int, error)
 	// Get all the habits for the given day
-	Get(ctx context.Context, day time.Time) ([]*Habit, error)
+	GetAllByDay(ctx context.Context, day time.Time) (*Chain, error)
 	Create(ctx context.Context, habit *Habit) error
+	// delete a habit
 	Delete(ctx context.Context, id HabitId) error
 	Update(ctx context.Context, habit *Habit) error
+}
+
+type Chain struct {
+	//HabitTitle(time.Now().Format(time.DateOnly)), nil
+	// 12/2 habits on June 22nd
+	// No habits on August 26th
+	Title  string
+	Habits []*Habit
 }
 
 type HeathMap struct {

@@ -17,8 +17,8 @@ func TestCreateHabitTitle(t *testing.T) {
 		hasTitle string
 		err      error
 	}{
-		{"Given empty title should succeed", "", time.Now().UTC().Format(time.DateOnly), nil},
 		{"Given valid title should succeed", "Exercise", "Exercise", nil},
+		{"Given empty title should fail", "", "", habheath.ErrInvalidHabitTitle},
 		{"Given long title should fail", string(make([]byte, 251)), "", habheath.ErrInvalidHabitTitle},
 	}
 
@@ -33,14 +33,13 @@ func TestCreateHabitTitle(t *testing.T) {
 
 func TestCreateHabit(t *testing.T) {
 	title := habheath.HabitTitle("Exercise")
-	day := time.Now().UTC()
 	isCompleted := false
 
-	habit, err := habheath.CreateHabit(title, day, isCompleted)
+	habit, err := habheath.CreateHabit(title, now, isCompleted)
 
 	assert.NoError(t, err)
 	assert.Equal(t, title, habit.Title)
-	assert.Equal(t, time.Date(day.Year(), day.Month(), day.Day(), 0, 0, 0, 0, time.UTC), habit.Day)
+	assert.Equal(t, time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC), habit.Day)
 	assert.Equal(t, isCompleted, habit.IsCompleted)
 	assert.WithinDuration(t, time.Now().UTC(), habit.UpdatedAt, time.Second)
 }
