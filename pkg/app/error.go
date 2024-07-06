@@ -1,4 +1,4 @@
-package habheath
+package app
 
 import (
 	"errors"

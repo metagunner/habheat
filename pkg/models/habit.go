@@ -1,12 +1,14 @@
-package habheath
+package models
 
 import (
 	"context"
 	"time"
+
+	"github.com/metagunner/habheath/pkg/app"
 )
 
 var (
-	ErrInvalidHabitTitle = Errorf(EINVALID, "Invalid habit title.")
+	ErrInvalidHabitTitle = app.Errorf(app.EINVALID, "Invalid habit title.")
 )
 
 type Habit struct {
@@ -60,9 +62,7 @@ func (h *Habit) ChangeTitle(title string) error {
 
 type HabitService interface {
 	// All the habits for heath map
-	HeatMap(ctx context.Context, year int) ([]*HeathMap, int, error)
-	// Don't break the chain list
-	MontlyChain(ctx context.Context, year int) ([]*DontBreakTheChain, int, error)
+	HeatMap(ctx context.Context, from time.Time, to time.Time) (map[time.Time]*HeathMap, int, error)
 	// Get all the habits for the given day
 	GetAllByDay(ctx context.Context, day time.Time) (*Chain, error)
 	Create(ctx context.Context, habit *Habit) error
@@ -85,11 +85,4 @@ type HeathMap struct {
 	Day                 int
 	Month               int
 	Year                int
-}
-
-type DontBreakTheChain struct {
-	Day     int
-	Month   int
-	Year    int
-	IsBreak bool
 }
