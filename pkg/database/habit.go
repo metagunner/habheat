@@ -11,9 +11,7 @@ import (
 	"github.com/metagunner/habheath/pkg/utils"
 )
 
-var (
-	ErrHabitNotFound = app.Errorf(app.ENOTFOUND, "Habit not found.")
-)
+var ErrHabitNotFound = app.Errorf(app.ENOTFOUND, "Habit not found.")
 
 type HabitServiceImpl struct {
 	db *DB
@@ -80,9 +78,12 @@ func (s *HabitServiceImpl) GetAllByDay(ctx context.Context, day time.Time) (*mod
 			is_completed,
 		    updated_at
 		FROM habit
+		WHERE day = ?
 		ORDER BY id ASC
 	`
-	rows, err := s.db.db.QueryContext(ctx, getHabitsQuery)
+
+	tsQuery := day.UTC().Format(time.RFC3339)
+	rows, err := s.db.db.QueryContext(ctx, getHabitsQuery, tsQuery)
 	defer rows.Close()
 	if err != nil {
 		return nil, err
@@ -117,7 +118,6 @@ func (s *HabitServiceImpl) Create(ctx context.Context, habit *models.Habit) erro
 
 	habitDay := habit.Day.Format(time.RFC3339)
 	result, err := tx.ExecContext(ctx, createHabitQuery, habit.Title, habitDay, habit.IsCompleted, habit.UpdatedAt)
-
 	if err != nil {
 		return FormatError(err)
 	}

@@ -12,8 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const TestYear = 2024
-const TestMonth = time.January
+const (
+	TestYear  = 2023
+	TestMonth = time.November
+)
 
 var testDB *DB
 

@@ -39,13 +39,13 @@ func SeedTestData(ctx context.Context, db *DB, year int, month time.Month) {
 		var b strings.Builder
 		b.WriteString("INSERT INTO habit (title, day, is_completed, updated_at) VALUES")
 
-		maxHabitsPerDay := 3
+		maxHabitsPerDay := 6
 		var values []interface{}
 		date := utils.CreateDate(year, month, 1)
 		months := utils.GetMonths(date)
 
 		for _, m := range months {
-			for i := 1; i <= utils.GetDaysInMonth(date); i++ {
+			for i := 1; i <= utils.GetDaysInMonth(m); i++ {
 				title, _ := models.CreateHabitTitle(fmt.Sprintf("Habit %s %d", m.Format(time.DateOnly), i))
 				day := utils.CreateDate(m.Year(), m.Month(), i)
 				habitsPerDay := rand.Intn(maxHabitsPerDay)

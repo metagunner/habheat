@@ -25,20 +25,20 @@ func TestGetMonths(t *testing.T) {
 
 		assert.Equal(t, 12, len(months))
 
-		expected := date.AddDate(0, -11, 0)
+		expected := date
 		for _, month := range months {
 			assert.Equal(t, expected.Format("Jan"), month.Format("Jan"))
 			expected = expected.AddDate(0, 1, 0)
 		}
 	})
 
-	t.Run("Given middle of the year should include months from previous year", func(t *testing.T) {
-		date := time.Date(2024, 3, 7, 0, 0, 0, 0, time.UTC)
+	t.Run("Given middle of the year should include months from next year", func(t *testing.T) {
+		date := time.Date(2023, 3, 7, 0, 0, 0, 0, time.UTC)
 		months := GetMonths(date)
 
 		assert.Equal(t, 12, len(months))
 
-		expected := date.AddDate(0, -11, 0)
+		expected := date
 		for _, month := range months {
 			assert.Equal(t, expected.Format("Jan"), month.Format("Jan"))
 			expected = expected.AddDate(0, 1, 0)

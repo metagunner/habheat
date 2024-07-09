@@ -15,16 +15,14 @@ func GetYearsBetween(from int, to int) []int {
 	return years
 }
 
-// Get 12 months starting from to backwards
-func GetMonths(from time.Time) []time.Time {
-	months := make([]time.Time, 0, 12)
-	prevMonth := from
-	for i := 0; i < 12; i++ {
-		months = append(months, prevMonth)
-		prevMonth = prevMonth.AddDate(0, -1, 0)
+func GetMonths(first time.Time) []time.Time {
+	months := make([]time.Time, 0)
+	nextMonth := first
+	for i := 0; len(months) != 12; i++ {
+		months = append(months, nextMonth)
+		nextMonth = nextMonth.AddDate(0, 1, 0)
 	}
 
-	slices.Reverse(months)
 	return months
 }
 

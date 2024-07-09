@@ -7,9 +7,7 @@ import (
 	"github.com/metagunner/habheath/pkg/app"
 )
 
-var (
-	ErrInvalidHabitTitle = app.Errorf(app.EINVALID, "Invalid habit title.")
-)
+var ErrInvalidHabitTitle = app.Errorf(app.EINVALID, "Invalid habit title.")
 
 type Habit struct {
 	Id          HabitId    `json:"id"`
@@ -19,8 +17,10 @@ type Habit struct {
 	UpdatedAt   time.Time  `json:"updated_at"`
 }
 
-type HabitId int
-type HabitTitle string
+type (
+	HabitId    int
+	HabitTitle string
+)
 
 func CreateHabitTitle(title string) (HabitTitle, error) {
 	if title == "" || len(title) > 250 {
@@ -72,9 +72,6 @@ type HabitService interface {
 }
 
 type Chain struct {
-	//HabitTitle(time.Now().Format(time.DateOnly)), nil
-	// 12/2 habits on June 22nd
-	// No habits on August 26th
 	Title  string
 	Habits []*Habit
 }
