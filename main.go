@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/jesseduffield/gocui"
 	"github.com/metagunner/habheath/pkg/database"
@@ -10,11 +13,12 @@ import (
 )
 
 func main() {
+	// SuperGrid()
 	db := database.NewDB("./test.db")
 	if err := db.Open(); err != nil {
 		panic(err)
 	}
-	database.SeedTestData(context.Background(), db, 2024, 7)
+	database.SeedTestData(context.Background(), db, 2023, 7)
 
 	gui := gui.NewGui(db)
 	err := gui.Run()
@@ -25,41 +29,61 @@ func main() {
 	}
 }
 
-//func lookup(tab []string, val string) (int, string, error) {
-//	for i, v := range tab {
-//		if len(val) >= len(v) && match(val[0:len(v)], v) {
-//			return i, val[len(v):], nil
-//		}
-//	}
-//	return -1, val, errBad
-//}
+func SuperGrid() {
+	// Get today's date
+	today := time.Now().UTC()
 
-//256-colors escape codes
-//		for i := 0; i < 256; i++ {
-//			str := fmt.Sprintf("\x1b[48;5;%dm\x1b[30m%3d\x1b[0m ", i, i)
-//			str += fmt.Sprintf("\x1b[38;5;%dm%3d\x1b[0m ", i, i)
-//
-//			if (i+1)%10 == 0 {
-//				str += "\n"
-//			}
-//
-//			fmt.Fprint(v, str)
-//		}
-//
-//		fmt.Fprint(v, "\n\n")
-//
-//		// 8-colors escape codes
-//		ctr := 0
-//		for i := 0; i <= 7; i++ {
-//			for _, j := range []int{1, 4, 7} {
-//				str := fmt.Sprintf("\x1b[3%d;%dm%d:%d\x1b[0m ", i, j, i, j)
-//				if (ctr+1)%20 == 0 {
-//					str += "\n"
-//				}
-//
-//				fmt.Fprint(v, str)
-//
-//				ctr++
-//			}
-//		}
-//
+	if today.Weekday() == time.Sunday {
+		today = today.AddDate(0, 0, 7)
+	}
+
+	// Find the next upcoming Sunday after today
+	for today.Weekday() != time.Sunday {
+		today = today.AddDate(0, 0, 1)
+	}
+
+	// Calculate the start date: 53 weeks before the next upcoming Sunday
+	startDate := today.AddDate(0, 0, -53*7)
+
+	// Find the first Sunday on or after the start date
+	firstSunday := startDate
+	for firstSunday.Weekday() != time.Sunday {
+		firstSunday = firstSunday.AddDate(0, 0, 1)
+	}
+	startDate = firstSunday
+
+	// Generate random shades of green (30-37 ANSI codes)
+	shades := []int{30, 32, 34, 36} // ANSI codes for different shades of green
+
+	// Create the grid
+	grid := make([][]string, 7)
+	for i := range grid {
+		grid[i] = make([]string, 53)
+	}
+
+	// Fill the grid with colored boxes
+	today = time.Now().UTC()
+	currentDate := startDate
+	for col := 0; col < 53; col++ {
+		for row := 0; row < 7; row++ {
+			if currentDate.After(today) {
+				grid[row][col] = fmt.Sprintf("\x1b[48;5;52m%d \x1b[0m", currentDate.Day())
+			} else {
+				// Select a random shade of green
+				colorIndex := rand.Intn(len(shades))
+				// ANSI escape sequence for coloring (green shades)
+				colorCode := shades[colorIndex]
+				grid[row][col] = fmt.Sprintf("\x1b[48;5;%dm%d \x1b[0m", colorCode, currentDate.Day())
+			}
+			currentDate = currentDate.AddDate(0, 0, 1) // move to the next day
+		}
+	}
+
+	// Print the grid
+	for _, row := range grid {
+		for _, cell := range row {
+			fmt.Print(cell)
+		}
+		fmt.Println()
+	}
+}
