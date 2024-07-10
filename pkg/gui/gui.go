@@ -119,6 +119,10 @@ func (gui *Gui) setKeybindings() error {
 	gui.g.SetKeybinding("heathmap", gocui.KeyArrowDown, gocui.ModNone, moveCursor(gui, 1, 0))
 	gui.g.SetKeybinding("heathmap", gocui.KeyArrowLeft, gocui.ModNone, moveCursor(gui, 0, -1))
 	gui.g.SetKeybinding("heathmap", gocui.KeyArrowRight, gocui.ModNone, moveCursor(gui, 0, 1))
+	gui.g.SetKeybinding("heathmap", 'k', gocui.ModNone, moveCursor(gui, -1, 0))
+	gui.g.SetKeybinding("heathmap", 'j', gocui.ModNone, moveCursor(gui, 1, 0))
+	gui.g.SetKeybinding("heathmap", 'h', gocui.ModNone, moveCursor(gui, 0, -1))
+	gui.g.SetKeybinding("heathmap", 'l', gocui.ModNone, moveCursor(gui, 0, 1))
 	gui.g.SetKeybinding("heathmap", 'a', gocui.ModNone, gui.wrappedHandler(gui.ChainPanel.OpenChainPanel))
 
 	err = gui.g.SetKeybinding("years", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
