@@ -1,0 +1,19 @@
+# Hidden
+.*
+
+# Binaries
+habheath
+habheath.exe
+
+#Tests
+test.db
+
+# Exceptions
+!.editorconfig
+!.gitignore
+!.goreleaser.yml
+!.golangci.yml
+!.circleci/
+!.github/
+!.vscode/
+!.devcontainer/
