@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 
 	"github.com/adrg/xdg"
@@ -14,10 +15,16 @@ import (
 	"github.com/metagunner/habheath/pkg/config"
 	"github.com/metagunner/habheath/pkg/database"
 	"github.com/metagunner/habheath/pkg/gui"
+	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
 
+// ldflag
+var version string
+
 func main() {
+	checkVersion()
+
 	configDir, err := findOrCreateConfigDir()
 	if err != nil && !os.IsPermission(err) {
 		panic(err)
@@ -36,7 +43,7 @@ func main() {
 	}
 	database.SeedTestData(context.Background(), db, 2023, 7)
 
-	gui := gui.NewGui(config, db)
+	gui := gui.NewGui(config, db, version)
 	err = gui.Run()
 	if err != nil {
 		if !errors.Is(err, gocui.ErrQuit) {
@@ -86,7 +93,26 @@ func findOrCreateConfigDir() (string, error) {
 	return folder, os.MkdirAll(folder, 0o755)
 }
 
-func findConfigDir() {
+// The version is baked into the habheath binary via LDFLAG argument.
+// If there is no version provided we use the Go built-in function to get build version, it is a git commit hash.
+func checkVersion() {
+	// Version has already been set by the build flags
+	if version != "" {
+		return
+	}
+
+	goBuildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+
+	revision, ok := lo.Find(goBuildInfo.Settings, func(setting debug.BuildSetting) bool {
+		return setting.Key == "vcs.revision"
+	})
+	if ok {
+		// if built from source show the commit hash
+		version = revision.Value
+	}
 }
 
 // just to visualize and test heathmap

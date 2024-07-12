@@ -27,6 +27,8 @@ type Gui struct {
 	heathmapFirstDate  time.Time
 	heathmapLastDate   time.Time
 	Config             *config.UserConfig
+	StatusView         *gocui.View
+	version            string
 }
 
 type HeathGrid struct {
@@ -46,8 +48,8 @@ var (
 	grid    [][]*HeathGrid
 )
 
-func NewGui(config *config.UserConfig, db *database.DB) *Gui {
-	return &Gui{Config: config, db: db}
+func NewGui(config *config.UserConfig, db *database.DB, version string) *Gui {
+	return &Gui{Config: config, db: db, version: version}
 }
 
 func (gui *Gui) initGocui() (*gocui.Gui, error) {
@@ -164,7 +166,13 @@ func (gui *Gui) layout(g *gocui.Gui) error {
 
 	gui.renderHeathmap()
 	gui.g.SetViewOnTop("colors")
+	gui.renderVersion()
 	return nil
+}
+
+func (gui *Gui) renderVersion() {
+	gui.StatusView.Clear()
+	fmt.Fprintf(gui.StatusView, "%s", gui.version)
 }
 
 func (gui *Gui) renderHeathmap() error {
