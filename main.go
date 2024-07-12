@@ -37,7 +37,8 @@ func main() {
 	}
 
 	// HeathmapGrid()
-	db := database.NewDB("./test.db")
+	dbPath := filepath.Join(configDir, "test.db")
+	db := database.NewDB(dbPath)
 	if err := db.Open(); err != nil {
 		panic(err)
 	}
