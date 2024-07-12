@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -42,7 +41,7 @@ func main() {
 	if err := db.Open(); err != nil {
 		panic(err)
 	}
-	database.SeedTestData(context.Background(), db, 2023, 7)
+	// database.SeedTestData(context.Background(), db, 2023, 7)
 
 	gui := gui.NewGui(config, db, version)
 	err = gui.Run()
