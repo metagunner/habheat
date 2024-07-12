@@ -119,7 +119,7 @@ func (s *HabitServiceImpl) Create(ctx context.Context, habit *models.Habit) erro
 	habitDay := habit.Day.Format(time.RFC3339)
 	result, err := tx.ExecContext(ctx, createHabitQuery, habit.Title, habitDay, habit.IsCompleted, habit.UpdatedAt)
 	if err != nil {
-		return FormatError(err)
+		return err
 	}
 
 	id, err := result.LastInsertId()
@@ -143,7 +143,7 @@ func (s *HabitServiceImpl) Delete(ctx context.Context, id models.HabitId) error 
 	}
 
 	if _, err := tx.ExecContext(ctx, `DELETE FROM habit WHERE id = ?`, id); err != nil {
-		return FormatError(err)
+		return err
 	}
 
 	return tx.Commit()
@@ -171,7 +171,7 @@ func (s *HabitServiceImpl) Update(ctx context.Context, habit *models.Habit) erro
 		habit.IsCompleted,
 		habit.UpdatedAt,
 		habit.Id); err != nil {
-		return FormatError(err)
+		return err
 	}
 
 	return tx.Commit()
@@ -180,7 +180,7 @@ func (s *HabitServiceImpl) Update(ctx context.Context, habit *models.Habit) erro
 func checkHabitExists(ctx context.Context, tx *sql.Tx, id models.HabitId) error {
 	var n int
 	if err := tx.QueryRowContext(ctx, `SELECT COUNT(1) FROM habit WHERE id = ?`, id).Scan(&n); err != nil {
-		return FormatError(err)
+		return err
 	} else if n == 0 {
 		return ErrHabitNotFound
 	}

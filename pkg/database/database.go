@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/metagunner/habheath/pkg/app"
 	"github.com/pressly/goose/v3"
 )
 
@@ -38,7 +37,7 @@ func (db *DB) Open() (err error) {
 	}
 
 	if db.DSN != ":memory:" {
-		if err := os.MkdirAll(filepath.Dir(db.DSN), 0700); err != nil {
+		if err := os.MkdirAll(filepath.Dir(db.DSN), 0o700); err != nil {
 			return err
 		}
 	}
@@ -70,19 +69,4 @@ func (db *DB) Close() error {
 // QueryRow runs the query and returns a single row.
 func (db *DB) QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
 	return db.db.QueryRowContext(ctx, query, args...)
-}
-
-// FormatError returns err as a error, if possible.
-// Otherwise returns the original error.
-func FormatError(err error) error {
-	if err == nil {
-		return nil
-	}
-
-	switch err.Error() {
-	case "UNIQUE constraint failed: dial_memberships.dial_id, dial_memberships.user_id":
-		return app.Errorf(app.ECONFLICT, "Dial membership already exists.")
-	default:
-		return err
-	}
 }

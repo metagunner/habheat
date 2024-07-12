@@ -1,5 +1,7 @@
 package app
 
+// taken from https://github.com/benbjohnson/wtf/blob/main/error.go
+
 import (
 	"errors"
 	"fmt"
