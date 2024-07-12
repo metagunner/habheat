@@ -5,23 +5,39 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/adrg/xdg"
 	"github.com/jesseduffield/gocui"
+	"github.com/metagunner/habheath/pkg/config"
 	"github.com/metagunner/habheath/pkg/database"
 	"github.com/metagunner/habheath/pkg/gui"
+	"gopkg.in/yaml.v3"
 )
 
 func main() {
-	// SuperGrid()
+	configDir, err := findOrCreateConfigDir()
+	if err != nil && !os.IsPermission(err) {
+		panic(err)
+	}
+
+	configFilePath := filepath.Join(configDir, "config.yml")
+	config, err := loadUserConfig(configFilePath, config.GetDefaultConfig())
+	if err != nil {
+		panic(err)
+	}
+
+	// HeathmapGrid()
 	db := database.NewDB("./test.db")
 	if err := db.Open(); err != nil {
 		panic(err)
 	}
 	database.SeedTestData(context.Background(), db, 2023, 7)
 
-	gui := gui.NewGui(db)
-	err := gui.Run()
+	gui := gui.NewGui(config, db)
+	err = gui.Run()
 	if err != nil {
 		if !errors.Is(err, gocui.ErrQuit) {
 			panic(err)
@@ -29,7 +45,52 @@ func main() {
 	}
 }
 
-func SuperGrid() {
+// loads the user config with defaults
+func loadUserConfig(configFilePath string, base *config.UserConfig) (*config.UserConfig, error) {
+	if _, err := os.Stat(configFilePath); err != nil {
+		if !os.IsNotExist(err) {
+			return nil, err
+		}
+
+		// create the config file if it does not exist
+		file, err := os.Create(configFilePath)
+		if err != nil {
+			if os.IsPermission(err) {
+				panic(err)
+			}
+			return nil, err
+		}
+		file.Close()
+	}
+
+	content, err := os.ReadFile(configFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := yaml.Unmarshal(content, base); err != nil {
+		return nil, fmt.Errorf("The config at `%s` couldn't be parsed, please inspect it before opening up an issue.\n%w", configFilePath, err)
+	}
+
+	return base, nil
+}
+
+func findOrCreateConfigDir() (string, error) {
+	// look for habheath/filename in XDG_CONFIG_HOME and XDG_CONFIG_DIRS
+	configFilepath, err := xdg.SearchConfigFile(filepath.Join("habheath", "config.yml"))
+	if err != nil {
+		configFilepath = filepath.Join(xdg.ConfigHome, "habheath", "config.yml")
+	}
+
+	folder := filepath.Dir(configFilepath)
+	return folder, os.MkdirAll(folder, 0o755)
+}
+
+func findConfigDir() {
+}
+
+// just to visualize and test heathmap
+func HeathmapGrid() {
 	// Get today's date
 	today := time.Now().UTC()
 

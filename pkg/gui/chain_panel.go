@@ -101,7 +101,7 @@ func (self *ChainPanelContext) CloseChainPanel() error {
 	if err := self.gui.reInitGrid(selected); err != nil {
 		return err
 	}
-	if err := self.gui.renderHeathmapv3(); err != nil {
+	if err := self.gui.renderHeathmap(); err != nil {
 		return err
 	}
 

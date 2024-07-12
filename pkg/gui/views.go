@@ -66,10 +66,11 @@ func (gui *Gui) createAllViews() error {
 	}
 	colorsV.Title = "Colors"
 	colorsV.FrameRunes = roundedFrameRunes
-	color := AvailableColors()["greens"]
+	defaultTheme := gui.Config.Gui.Theme.Selected
+	color := gui.Config.Gui.Theme.ColorSchemes[defaultTheme]
 	fmt.Fprint(colorsV, "Less ")
-	for i := 1; i <= len(color); i++ {
-		fmt.Fprint(colorsV, color[i])
+	for i := 1; i <= len(color.StatusValues); i++ {
+		fmt.Fprint(colorsV, color.StatusValues[i])
 	}
 	fmt.Fprint(colorsV, " More")
 
@@ -94,7 +95,6 @@ func (gui *Gui) createAllViews() error {
 	chainPanel.Visible = false
 	chainPanel.CanScrollPastBottom = true
 	chainPanel.Highlight = true
-
 
 	return nil
 }
