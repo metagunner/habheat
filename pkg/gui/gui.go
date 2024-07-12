@@ -9,10 +9,12 @@ import (
 	"time"
 
 	"github.com/jesseduffield/gocui"
+	"github.com/metagunner/habheath/pkg/app"
 	"github.com/metagunner/habheath/pkg/config"
 	"github.com/metagunner/habheath/pkg/database"
 	"github.com/metagunner/habheath/pkg/models"
 	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/samber/lo"
 )
 
 type Gui struct {
@@ -43,9 +45,10 @@ type HeathGrid struct {
 }
 
 var (
-	cursorX int
-	cursorY int
-	grid    [][]*HeathGrid
+	cursorX             int
+	cursorY             int
+	grid                [][]*HeathGrid
+	newVersionAvailable bool
 )
 
 func NewGui(config *config.UserConfig, db *database.DB, version string) *Gui {
@@ -94,6 +97,8 @@ func (gui *Gui) Run() error {
 	}
 
 	gui.setKeybindings()
+
+	newVersionAvailable = app.CheckForNewUpdate(gui.version)
 
 	return gui.g.MainLoop()
 }
@@ -172,7 +177,8 @@ func (gui *Gui) layout(g *gocui.Gui) error {
 
 func (gui *Gui) renderVersion() {
 	gui.StatusView.Clear()
-	fmt.Fprintf(gui.StatusView, "%s", gui.version)
+	newVersionText := lo.Ternary(newVersionAvailable, "new version available!", "")
+	fmt.Fprintf(gui.StatusView, "%s %s", gui.version, newVersionText)
 }
 
 func (gui *Gui) renderHeathmap() error {
