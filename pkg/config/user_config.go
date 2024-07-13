@@ -34,7 +34,7 @@ type KeybindingUniversalConfig struct {
 	PrevItem    string `yaml:"prevItem"`
 	NextItem    string `yaml:"nextItem"`
 	PrevItemAlt string `yaml:"prevItemAlt"`
-	NextItemAlt string `yaml:"prevItemAlt"`
+	NextItemAlt string `yaml:"nextItemAlt"`
 	Select      string `yaml:"select"`
 	Confirm     string `yaml:"confirm"`
 	Close       string `yaml:"close"`
