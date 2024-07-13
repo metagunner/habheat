@@ -1,7 +1,7 @@
 # Habheat
 A simple terminal UI for habit tracking with Github like heat map.
 
-![green theme](docs/assets/heathmap-green-scheme.png)
+![green theme](docs/assets/heatmap-green-scheme.png)
 
 - [Table of contents](#table-of-contents)
 - [Features](#features)
