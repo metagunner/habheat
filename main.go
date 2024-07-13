@@ -115,6 +115,16 @@ func checkVersion() {
 	}
 }
 
+// Generate yaml file with default user config values. Used for the documentation
+func generateYamlFile() {
+	file, _ := os.OpenFile("./test.yml", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o600)
+	defer file.Close()
+
+	enc := yaml.NewEncoder(file)
+
+	_ = enc.Encode(config.GetDefaultConfig())
+}
+
 // just to visualize and test heathmap
 func HeathmapGrid() {
 	// Get today's date
