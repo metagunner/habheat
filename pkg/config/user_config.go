@@ -1,7 +1,8 @@
 package config
 
 type UserConfig struct {
-	Gui GuiConfig `yaml:"gui"`
+	Gui        GuiConfig        `yaml:"gui"`
+	Keybinding KeybindingConfig `yaml:"keybinding"`
 }
 
 type GuiConfig struct {
@@ -9,10 +10,10 @@ type GuiConfig struct {
 }
 
 type ThemeConfig struct {
-	Selected            string                         `yaml:"selected"`
+	Selected            string                        `yaml:"selected"`
 	ColorSchemes        map[string]HeatmapColorScheme `yaml:"colorSchemes"`
-	ActiveBorderColor   []string                       `yaml:"activeBorderColor"`
-	InactiveBorderColor []string                       `yaml:"inactiveBorderColor"`
+	ActiveBorderColor   []string                      `yaml:"activeBorderColor"`
+	InactiveBorderColor []string                      `yaml:"inactiveBorderColor"`
 }
 
 type HeatmapColorScheme struct {
@@ -21,6 +22,37 @@ type HeatmapColorScheme struct {
 	ZeroCompletedHabitValue string         `yaml:"zeroCompletedHabitValue"`
 	StatusValues            map[int]string `yaml:"statusValues"`
 	CursorValue             string         `yaml:"cursorValue"`
+}
+
+type KeybindingConfig struct {
+	Universal KeybindingUniversalConfig `yaml:"universal"`
+	Heatmap   KeybindingHeatmapConfig   `yaml:"heatmap"`
+}
+
+type KeybindingUniversalConfig struct {
+	Quit        string `yaml:"quit"`
+	PrevItem    string `yaml:"prevItem"`
+	NextItem    string `yaml:"nextItem"`
+	PrevItemAlt string `yaml:"prevItemAlt"`
+	NextItemAlt string `yaml:"prevItemAlt"`
+	Select      string `yaml:"select"`
+	Confirm     string `yaml:"confirm"`
+	Close       string `yaml:"close"`
+}
+
+type KeybindingHeatmapConfig struct {
+	Right       string `yaml:"right"`
+	Left        string `yaml:"left"`
+	Up          string `yaml:"up"`
+	Down        string `yaml:"down"`
+	RightAlt    string `yaml:"rightAlt"`
+	LeftAlt     string `yaml:"leftAlt"`
+	UpAlt       string `yaml:"upAlt"`
+	DownAlt     string `yaml:"downAlt"`
+	EditHabit   string `yaml:"editHabit"`
+	ToggleHabit string `yaml:"toggleHabit"`
+	CreateHabit string `yaml:"createHabit"`
+	DeleteHabit string `yaml:"deleteHabit"`
 }
 
 const (
@@ -32,9 +64,9 @@ func GetDefaultConfig() *UserConfig {
 	return &UserConfig{
 		Gui: GuiConfig{
 			Theme: ThemeConfig{
-				ActiveBorderColor:               []string{"green", "bold"},
-				InactiveBorderColor:             []string{"default"},
-				Selected:                        "green",
+				ActiveBorderColor:   []string{"green", "bold"},
+				InactiveBorderColor: []string{"default"},
+				Selected:            "green",
 				ColorSchemes: map[string]HeatmapColorScheme{
 					"green": {
 						InvalidDayValue: "  ", NoHabitsValue: "  ", ZeroCompletedHabitValue: "  ", StatusValues: map[int]string{
@@ -77,6 +109,32 @@ func GetDefaultConfig() *UserConfig {
 						CursorValue: "\033[48;5;196m" + space + end,
 					},
 				},
+			},
+		},
+		Keybinding: KeybindingConfig{
+			Universal: KeybindingUniversalConfig{
+				Quit:        "q",
+				PrevItem:    "<up>",
+				NextItem:    "<down>",
+				PrevItemAlt: "k",
+				NextItemAlt: "j",
+				Select:      "<space>",
+				Confirm:     "<enter>",
+				Close:       "<esc>",
+			},
+			Heatmap: KeybindingHeatmapConfig{
+				Right:       "l",
+				Left:        "h",
+				Up:          "k",
+				Down:        "j",
+				RightAlt:    "<right>",
+				LeftAlt:     "<left>",
+				UpAlt:       "<up>",
+				DownAlt:     "<down>",
+				EditHabit:   "u",
+				ToggleHabit: "<space>",
+				CreateHabit: "n",
+				DeleteHabit: "r",
 			},
 		},
 	}

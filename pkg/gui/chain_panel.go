@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jesseduffield/gocui"
+	"github.com/metagunner/habheat/pkg/config"
 	"github.com/metagunner/habheat/pkg/models"
 	"github.com/metagunner/habheat/pkg/utils"
 	"github.com/samber/lo"
@@ -47,7 +48,7 @@ func NewChainPanelContext(v *gocui.View, gui *Gui, habitService models.HabitServ
 		return result
 	}
 	viewModel.list = NewSelectList(gui, v, getDisplayStrings)
-	viewModel.list.SetEmptyMessage("No habits for this day. Create one by presing the 'c'")
+	viewModel.list.SetEmptyMessage("No habits for this day. Create one by presing the " + gui.Config.Keybinding.Heatmap.CreateHabit)
 
 	chainPanelContext := &ChainPanelContext{
 		viewModel:    viewModel,
@@ -56,11 +57,12 @@ func NewChainPanelContext(v *gocui.View, gui *Gui, habitService models.HabitServ
 		gui:          gui,
 	}
 
-	gui.g.SetKeybinding(v.Name(), gocui.KeyEnter, gocui.ModNone, gui.wrappedHandler(chainPanelContext.ToggleHabitCompletion))
-	gui.g.SetKeybinding(v.Name(), 'u', gocui.ModNone, gui.wrappedHandler(chainPanelContext.UpdateHabit))
-	gui.g.SetKeybinding(v.Name(), 'a', gocui.ModNone, gui.wrappedHandler(chainPanelContext.AddHabit))
-	gui.g.SetKeybinding(v.Name(), 'r', gocui.ModNone, gui.wrappedHandler(chainPanelContext.RemoveHabit))
-	gui.g.SetKeybinding(v.Name(), gocui.KeyEsc, gocui.ModNone, gui.wrappedHandler(chainPanelContext.CloseChainPanel))
+	heatmapKeys := gui.Config.Keybinding.Heatmap
+	gui.g.SetKeybinding(v.Name(), config.GetKey(heatmapKeys.ToggleHabit), gocui.ModNone, gui.wrappedHandler(chainPanelContext.ToggleHabitCompletion))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(heatmapKeys.EditHabit), gocui.ModNone, gui.wrappedHandler(chainPanelContext.UpdateHabit))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(heatmapKeys.CreateHabit), gocui.ModNone, gui.wrappedHandler(chainPanelContext.AddHabit))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(heatmapKeys.DeleteHabit), gocui.ModNone, gui.wrappedHandler(chainPanelContext.RemoveHabit))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(gui.Config.Keybinding.Universal.Close), gocui.ModNone, gui.wrappedHandler(chainPanelContext.CloseChainPanel))
 
 	return chainPanelContext
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jesseduffield/gocui"
+	"github.com/metagunner/habheat/pkg/config"
 )
 
 type SelectList struct {
@@ -26,16 +27,16 @@ func NewSelectList(g *Gui, view *gocui.View, getDisplayStrings func() []SelectIt
 	s := &SelectList{gui: g, view: view, getDisplayStrings: getDisplayStrings}
 
 	// handlers
-	if err := s.gui.g.SetKeybinding(s.view.Name(), 'j', gocui.ModNone, g.wrappedHandler(s.HandleNextLine)); err != nil {
+	if err := s.gui.g.SetKeybinding(s.view.Name(), config.GetKey(g.Config.Keybinding.Universal.NextItem), gocui.ModNone, g.wrappedHandler(s.HandleNextLine)); err != nil {
 		panic(err)
 	}
-	if err := s.gui.g.SetKeybinding(s.view.Name(), 'k', gocui.ModNone, g.wrappedHandler(s.HandlePrevLine)); err != nil {
+	if err := s.gui.g.SetKeybinding(s.view.Name(), config.GetKey(g.Config.Keybinding.Universal.PrevItem), gocui.ModNone, g.wrappedHandler(s.HandlePrevLine)); err != nil {
 		panic(err)
 	}
-	if err := s.gui.g.SetKeybinding(s.view.Name(), gocui.KeyArrowDown, gocui.ModNone, g.wrappedHandler(s.HandleNextLine)); err != nil {
+	if err := s.gui.g.SetKeybinding(s.view.Name(), config.GetKey(g.Config.Keybinding.Universal.NextItemAlt), gocui.ModNone, g.wrappedHandler(s.HandleNextLine)); err != nil {
 		panic(err)
 	}
-	if err := s.gui.g.SetKeybinding(s.view.Name(), gocui.KeyArrowUp, gocui.ModNone, g.wrappedHandler(s.HandlePrevLine)); err != nil {
+	if err := s.gui.g.SetKeybinding(s.view.Name(), config.GetKey(g.Config.Keybinding.Universal.PrevItemAlt), gocui.ModNone, g.wrappedHandler(s.HandlePrevLine)); err != nil {
 		panic(err)
 	}
 

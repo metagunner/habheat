@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/jesseduffield/gocui"
+	"github.com/metagunner/habheat/pkg/config"
 )
 
 type HabitPanelContext struct {
@@ -26,8 +27,8 @@ func NewHabitPanelContext(v *gocui.View, gui *Gui) *HabitPanelContext {
 		viewModel: viewModel,
 		gui:       gui,
 	}
-	gui.g.SetKeybinding(v.Name(), gocui.KeyEnter, gocui.ModNone, gui.wrappedHandler(habitPanelContext.OnConfirm))
-	gui.g.SetKeybinding(v.Name(), gocui.KeyEsc, gocui.ModNone, gui.wrappedHandler(habitPanelContext.CloseHabitPanel))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(gui.Config.Keybinding.Universal.Confirm), gocui.ModNone, gui.wrappedHandler(habitPanelContext.OnConfirm))
+	gui.g.SetKeybinding(v.Name(), config.GetKey(gui.Config.Keybinding.Universal.Close), gocui.ModNone, gui.wrappedHandler(habitPanelContext.CloseHabitPanel))
 	return habitPanelContext
 }
 

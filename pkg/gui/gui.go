@@ -105,7 +105,7 @@ func (gui *Gui) Run() error {
 
 func (gui *Gui) setKeybindings() error {
 	var err error
-	err = gui.g.SetKeybinding("", 'q', gocui.ModNone, quit)
+	err = gui.g.SetKeybinding("", config.GetKey(gui.Config.Keybinding.Universal.Quit), gocui.ModNone, quit)
 	if err != nil {
 		return err
 	}
@@ -124,17 +124,18 @@ func (gui *Gui) setKeybindings() error {
 		return err
 	}
 
-	gui.g.SetKeybinding("heatmap", gocui.KeyArrowUp, gocui.ModNone, moveCursor(gui, -1, 0))
-	gui.g.SetKeybinding("heatmap", gocui.KeyArrowDown, gocui.ModNone, moveCursor(gui, 1, 0))
-	gui.g.SetKeybinding("heatmap", gocui.KeyArrowLeft, gocui.ModNone, moveCursor(gui, 0, -1))
-	gui.g.SetKeybinding("heatmap", gocui.KeyArrowRight, gocui.ModNone, moveCursor(gui, 0, 1))
-	gui.g.SetKeybinding("heatmap", 'k', gocui.ModNone, moveCursor(gui, -1, 0))
-	gui.g.SetKeybinding("heatmap", 'j', gocui.ModNone, moveCursor(gui, 1, 0))
-	gui.g.SetKeybinding("heatmap", 'h', gocui.ModNone, moveCursor(gui, 0, -1))
-	gui.g.SetKeybinding("heatmap", 'l', gocui.ModNone, moveCursor(gui, 0, 1))
-	gui.g.SetKeybinding("heatmap", 'a', gocui.ModNone, gui.wrappedHandler(gui.ChainPanel.OpenChainPanel))
+	heatmapKeys := gui.Config.Keybinding.Heatmap
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.UpAlt), gocui.ModNone, moveCursor(gui, -1, 0))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.DownAlt), gocui.ModNone, moveCursor(gui, 1, 0))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.LeftAlt), gocui.ModNone, moveCursor(gui, 0, -1))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.RightAlt), gocui.ModNone, moveCursor(gui, 0, 1))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.Up), gocui.ModNone, moveCursor(gui, -1, 0))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.Down), gocui.ModNone, moveCursor(gui, 1, 0))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.Left), gocui.ModNone, moveCursor(gui, 0, -1))
+	gui.g.SetKeybinding("heatmap", config.GetKey(heatmapKeys.Right), gocui.ModNone, moveCursor(gui, 0, 1))
+	gui.g.SetKeybinding("heatmap", config.GetKey(gui.Config.Keybinding.Universal.Select), gocui.ModNone, gui.wrappedHandler(gui.ChainPanel.OpenChainPanel))
 
-	err = gui.g.SetKeybinding("years", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
+	err = gui.g.SetKeybinding("years", config.GetKey(gui.Config.Keybinding.Universal.Select), gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		selected := gui.YearsSelectList.GetSelected().option
 		gui.reInitGrid(selected)
 		gui.renderHeatmap()
