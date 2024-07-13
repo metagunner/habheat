@@ -9,13 +9,10 @@ type GuiConfig struct {
 }
 
 type ThemeConfig struct {
-	Selected                        string                         `yaml:"selected"`
-	ColorSchemes                    map[string]HeathmapColorScheme `yaml:"colorSchemes"`
-	ActiveBorderColor               []string                       `yaml:"activeBorderColor"`
-	InactiveBorderColor             []string                       `yaml:"inactiveBorderColor"`
-	SelectedLineBgColor             []string                       `yaml:"selectedLineBgColor"`
-	InactiveViewSelectedLineBgColor []string                       `yaml:"inactiveViewSelectedLineBgColor"`
-	DefaultFgColor                  []string                       `yaml:"defaultFgColor"`
+	Selected            string                         `yaml:"selected"`
+	ColorSchemes        map[string]HeathmapColorScheme `yaml:"colorSchemes"`
+	ActiveBorderColor   []string                       `yaml:"activeBorderColor"`
+	InactiveBorderColor []string                       `yaml:"inactiveBorderColor"`
 }
 
 type HeathmapColorScheme struct {
@@ -37,9 +34,6 @@ func GetDefaultConfig() *UserConfig {
 			Theme: ThemeConfig{
 				ActiveBorderColor:               []string{"green", "bold"},
 				InactiveBorderColor:             []string{"default"},
-				SelectedLineBgColor:             []string{"blue"},
-				InactiveViewSelectedLineBgColor: []string{"bold"},
-				DefaultFgColor:                  []string{"default"},
 				Selected:                        "green",
 				ColorSchemes: map[string]HeathmapColorScheme{
 					"green": {
