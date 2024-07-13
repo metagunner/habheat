@@ -105,14 +105,14 @@ gui:
 
                 # Color shades with ANSI codes, from less to more
                 statusValues:
-                    1: "\e[48;5;22m  \e[0m"
-                    2: "\e[48;5;29m  \e[0m"
-                    3: "\e[48;5;34m  \e[0m"
-                    4: "\e[48;5;40m  \e[0m"
-                    5: "\e[48;5;118m  \e[0m"
+                    1: "\033[48;5;22m  \033[0m"
+                    2: "\033[48;5;29m  \033[0m"
+                    3: "\033[48;5;34m  \033[0m"
+                    4: "\033[48;5;40m  \033[0m"
+                    5: "\033[48;5;118m  \033[0m"
 
                 # Value for the cursor
-                cursorValue: "\e[48;5;196m  \e[0m"
+                cursorValue: "\033[48;5;196m  \033[0m"
 
             # Blue color scheme
             ice:
@@ -120,12 +120,12 @@ gui:
                 noHabitsValue: '  '
                 zeroCompletedHabitValue: '  '
                 statusValues:
-                    1: "\e[48;5;61m  \e[0m"
-                    2: "\e[48;5;67m  \e[0m"
-                    3: "\e[48;5;68m  \e[0m"
-                    4: "\e[48;5;74m  \e[0m"
-                    5: "\e[48;5;75m  \e[0m"
-                cursorValue: "\e[48;5;196m  \e[0m"
+                    1: "\033[48;5;61m  \033[0m"
+                    2: "\033[48;5;67m  \033[0m"
+                    3: "\033[48;5;68m  \033[0m"
+                    4: "\033[48;5;74m  \033[0m"
+                    5: "\033[48;5;75m  \033[0m"
+                cursorValue: "\033[48;5;196m  \033[0m"
 
             # Purple color scheme
             purple:
@@ -133,12 +133,12 @@ gui:
                 noHabitsValue: '  '
                 zeroCompletedHabitValue: '  '
                 statusValues:
-                    1: "\e[48;5;55m  \e[0m"
-                    2: "\e[48;5;92m  \e[0m"
-                    3: "\e[48;5;93m  \e[0m"
-                    4: "\e[48;5;129m  \e[0m"
-                    5: "\e[48;5;135m  \e[0m"
-                cursorValue: "\e[48;5;196m  \e[0m"
+                    1: "\033[48;5;55m  \033[0m"
+                    2: "\033[48;5;92m  \033[0m"
+                    3: "\033[48;5;93m  \033[0m"
+                    4: "\033[48;5;129m  \033[0m"
+                    5: "\033[48;5;135m  \033[0m"
+                cursorValue: "\033[48;5;196m  \033[0m"
 
             # Yellow color scheme
             yellow:
@@ -146,12 +146,12 @@ gui:
                 noHabitsValue: '  '
                 zeroCompletedHabitValue: '  '
                 statusValues:
-                    1: "\e[48;5;142m  \e[0m"
-                    2: "\e[48;5;178m  \e[0m"
-                    3: "\e[48;5;184m  \e[0m"
-                    4: "\e[48;5;220m  \e[0m"
-                    5: "\e[48;5;226m  \e[0m"
-                cursorValue: "\e[48;5;196m  \e[0m"
+                    1: "\033[48;5;142m  \033[0m"
+                    2: "\033[48;5;178m  \033[0m"
+                    3: "\033[48;5;184m  \033[0m"
+                    4: "\033[48;5;220m  \033[0m"
+                    5: "\033[48;5;226m  \033[0m"
+                cursorValue: "\033[48;5;196m  \033[0m"
 
         # Border color of the focused window
         activeBorderColor:
