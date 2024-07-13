@@ -39,15 +39,15 @@ brews:
     # Repository to push the tap to.
     tap:
       owner: metagunner
-      name: homebrew-habheath
+      name: homebrew-habheat
 
     # Your app's homepage.
     # Default is empty.
-    homepage: 'https://github.com/metagunner/habheath/'
+    homepage: 'https://github.com/metagunner/habheat/'
 
     # Your app's description.
     # Default is empty.
-    description: 'A simple terminal UI for habit tracking with Github like heath map, written in Go'
+    description: 'A simple terminal UI for habit tracking with Github like heat map, written in Go'
 
     # # Packages your package depends on.
     # dependencies:

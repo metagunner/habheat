@@ -1,5 +1,5 @@
-# Habheath
-A simple terminal UI for habit tracking with Github like heath map.
+# Habheat
+A simple terminal UI for habit tracking with Github like heat map.
 - [Table of contents](#table-of-contents)
 - [Features](#features)
   - [Compare two commits](#compare-two-commits)
@@ -17,11 +17,11 @@ A simple terminal UI for habit tracking with Github like heath map.
 ## Installation
 
 ### Binary Releases
-For Windows, Mac OS(10.12+) or Linux, you can download a binary release [here](https://github.com/metagunner/habheath/releases).
+For Windows, Mac OS(10.12+) or Linux, you can download a binary release [here](https://github.com/metagunner/habheat/releases).
 
 ### Go
 ```sh
-go install github.com/metagunner/habheath@latest
+go install github.com/metagunner/habheat@latest
 ```
 
 ### Manual
@@ -29,39 +29,39 @@ go install github.com/metagunner/habheath@latest
 You'll need to [install Go](https://golang.org/doc/install)
 
 ```
-git clone https://github.com/metagunner/habheath.git
-cd habheath
+git clone https://github.com/metagunner/habheat.git
+cd habheat
 go install
 ```
 
 You can also use `go run main.go` to run the application.
 
 ## Usage
-Call `habheath` in your terminal.
+Call `habheat` in your terminal.
 
 ```sh
-$ habheath
+$ habheat
 ```
 
 ## Configuration
 
 Default path for the config file and the database:
 
-- Linux: `~/.config/habheath/config.yml`
-- MacOS: `~/Library/Application\ Support/habheath/config.yml`
-- Windows: `%LOCALAPPDATA%\habheath\config.yml` (default location, but it will also be found in `%APPDATA%\habheath\config.yml`
+- Linux: `~/.config/habheat/config.yml`
+- MacOS: `~/Library/Application\ Support/habheat/config.yml`
+- Windows: `%LOCALAPPDATA%\habheat\config.yml` (default location, but it will also be found in `%APPDATA%\habheat\config.yml`
 
 <!-- START CONFIG YAML: AUTOMATICALLY GENERATED DO NOT UPDATE MANUALLY -->
 ### Defaults
 ```yaml
-# Config relating to the Habheath UI
+# Config relating to the Habheat UI
 gui:
     # Config relating to colors and styles.
     theme:
-        # Selected heath map color scheme.
+        # Selected heat map color scheme.
         selected: green
 
-        # Available heath map color schemes.
+        # Available heat map color schemes.
         colorSchemes:
             # Color scheme name. Write this to "selected" property.
             green:
@@ -141,10 +141,10 @@ gui:
     theme:
         selected: purple # The color scheme you want
 ```
-![green theme](docs/assets/heathmap-green-scheme.png)
-![ice theme](docs/assets/heathmap-ice-scheme.png)
-![purple theme](docs/assets/heathmap-purple-scheme.png)
-![yellow theme](docs/assets/heathmap-yellow-scheme.png)
+![green theme](docs/assets/heatmap-green-scheme.png)
+![ice theme](docs/assets/heatmap-ice-scheme.png)
+![purple theme](docs/assets/heatmap-purple-scheme.png)
+![yellow theme](docs/assets/heatmap-yellow-scheme.png)
 
 ### Customization
 The built-in color schemes are uses ANSI color codes to support all terminals. Depending on your terminal support you can also use unicode characters.

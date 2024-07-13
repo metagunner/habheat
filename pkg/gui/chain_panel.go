@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/jesseduffield/gocui"
-	"github.com/metagunner/habheath/pkg/models"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/models"
+	"github.com/metagunner/habheat/pkg/utils"
 	"github.com/samber/lo"
 )
 
@@ -66,7 +66,7 @@ func NewChainPanelContext(v *gocui.View, gui *Gui, habitService models.HabitServ
 }
 
 func (self *ChainPanelContext) OpenChainPanel() error {
-	selectedDate := self.gui.GetDateFromHeathmapCursor()
+	selectedDate := self.gui.GetDateFromHeatmapCursor()
 	if selectedDate.IsZero() {
 		return nil
 	}
@@ -92,7 +92,7 @@ func (self *ChainPanelContext) OpenChainPanel() error {
 func (self *ChainPanelContext) CloseChainPanel() error {
 	self.view.Clear()
 	self.view.Visible = false
-	if _, err := self.gui.g.SetCurrentView(self.gui.ViewHeathmap.Name()); err != nil {
+	if _, err := self.gui.g.SetCurrentView(self.gui.ViewHeatmap.Name()); err != nil {
 		return err
 	}
 	self.gui.YearsSelectList.RefreshOptions()
@@ -101,7 +101,7 @@ func (self *ChainPanelContext) CloseChainPanel() error {
 	if err := self.gui.reInitGrid(selected); err != nil {
 		return err
 	}
-	if err := self.gui.renderHeathmap(); err != nil {
+	if err := self.gui.renderHeatmap(); err != nil {
 		return err
 	}
 

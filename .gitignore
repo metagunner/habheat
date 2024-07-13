@@ -12,8 +12,8 @@
 !.devcontainer/
 
 # Binaries for programs and plugins
-habheath
-habheath.exe
+habheat
+habheat.exe
 *.exe
 *.exe~
 *.dll

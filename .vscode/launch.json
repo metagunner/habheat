@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug habheath",
+            "name": "Debug habheat",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -14,7 +14,7 @@
             "console": "integratedTerminal",
           },
         {
-            "name": "Attach to a running Habheath",
+            "name": "Attach to a running Habheat",
             "type": "go",
             "request": "attach",
             "mode": "remote",

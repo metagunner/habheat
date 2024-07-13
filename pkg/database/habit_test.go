@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/metagunner/habheath/pkg/models"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/models"
+	"github.com/metagunner/habheat/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -91,7 +91,7 @@ func TestHabitService_Update(t *testing.T) {
 	assert.Equal(t, !isCompleted, habit.IsCompleted)
 }
 
-func TestHabitService_HeathMap(t *testing.T) {
+func TestHabitService_HeatMap(t *testing.T) {
 	service := NewHabitService(testDB)
 	ctx := context.Background()
 
@@ -113,7 +113,7 @@ func TestHabitService_HeathMap(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, heatMap)
 
-	expected := map[time.Time]*models.HeathMap{
+	expected := map[time.Time]*models.HeatMap{
 		utils.CreateDate(testYear, 1, 1): {TotalNumberOfHabits: 1, CompletedHabits: 1, Day: 1, Month: 1, Year: testYear},
 		utils.CreateDate(testYear, 1, 2): {TotalNumberOfHabits: 1, CompletedHabits: 0, Day: 2, Month: 1, Year: testYear},
 	}
@@ -121,13 +121,13 @@ func TestHabitService_HeathMap(t *testing.T) {
 	assert.Equal(t, len(expected), count)
 
 	// Verify the heat map results
-	for date, expectedHeathMap := range expected {
-		actualHeathMap, exists := heatMap[date]
+	for date, expectedHeatMap := range expected {
+		actualHeatMap, exists := heatMap[date]
 		assert.True(t, exists, "Date %v not found in heat map", date)
-		assert.Equal(t, expectedHeathMap.TotalNumberOfHabits, actualHeathMap.TotalNumberOfHabits)
-		assert.Equal(t, expectedHeathMap.CompletedHabits, actualHeathMap.CompletedHabits)
-		assert.Equal(t, expectedHeathMap.Day, actualHeathMap.Day)
-		assert.Equal(t, expectedHeathMap.Month, actualHeathMap.Month)
-		assert.Equal(t, expectedHeathMap.Year, actualHeathMap.Year)
+		assert.Equal(t, expectedHeatMap.TotalNumberOfHabits, actualHeatMap.TotalNumberOfHabits)
+		assert.Equal(t, expectedHeatMap.CompletedHabits, actualHeatMap.CompletedHabits)
+		assert.Equal(t, expectedHeatMap.Day, actualHeatMap.Day)
+		assert.Equal(t, expectedHeatMap.Month, actualHeatMap.Month)
+		assert.Equal(t, expectedHeatMap.Year, actualHeatMap.Year)
 	}
 }

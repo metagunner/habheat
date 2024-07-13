@@ -9,31 +9,31 @@ import (
 	"time"
 
 	"github.com/jesseduffield/gocui"
-	"github.com/metagunner/habheath/pkg/app"
-	"github.com/metagunner/habheath/pkg/config"
-	"github.com/metagunner/habheath/pkg/database"
-	"github.com/metagunner/habheath/pkg/models"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/app"
+	"github.com/metagunner/habheat/pkg/config"
+	"github.com/metagunner/habheat/pkg/database"
+	"github.com/metagunner/habheat/pkg/models"
+	"github.com/metagunner/habheat/pkg/utils"
 	"github.com/samber/lo"
 )
 
 type Gui struct {
-	g                  *gocui.Gui
-	db                 *database.DB
-	ViewHeathmap       *gocui.View
-	YearsSelectList    *SelectList
-	ChainPanel         *ChainPanelContext
-	HabitsPanel        *HabitPanelContext
-	mustRenderHeathmap bool
-	HabitService       models.HabitService
-	heathmapFirstDate  time.Time
-	heathmapLastDate   time.Time
-	Config             *config.UserConfig
-	StatusView         *gocui.View
-	version            string
+	g                 *gocui.Gui
+	db                *database.DB
+	ViewHeatmap       *gocui.View
+	YearsSelectList   *SelectList
+	ChainPanel        *ChainPanelContext
+	HabitsPanel       *HabitPanelContext
+	mustRenderHeatmap bool
+	HabitService      models.HabitService
+	heatmapFirstDate  time.Time
+	heatmapLastDate   time.Time
+	Config            *config.UserConfig
+	StatusView        *gocui.View
+	version           string
 }
 
-type HeathGrid struct {
+type HeatGrid struct {
 	row                 int
 	column              int
 	key                 time.Time
@@ -47,7 +47,7 @@ type HeathGrid struct {
 var (
 	cursorX             int
 	cursorY             int
-	grid                [][]*HeathGrid
+	grid                [][]*HeatGrid
 	newVersionAvailable bool
 )
 
@@ -90,7 +90,7 @@ func (gui *Gui) Run() error {
 		return err
 	}
 
-	gui.mustRenderHeathmap = true
+	gui.mustRenderHeatmap = true
 
 	if _, err := gui.g.SetCurrentView("years"); err != nil {
 		return err
@@ -118,26 +118,26 @@ func (gui *Gui) setKeybindings() error {
 	}
 
 	err = gui.g.SetKeybinding("", '2', gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
-		return gui.nextWindow("heathmap")
+		return gui.nextWindow("heatmap")
 	})
 	if err != nil {
 		return err
 	}
 
-	gui.g.SetKeybinding("heathmap", gocui.KeyArrowUp, gocui.ModNone, moveCursor(gui, -1, 0))
-	gui.g.SetKeybinding("heathmap", gocui.KeyArrowDown, gocui.ModNone, moveCursor(gui, 1, 0))
-	gui.g.SetKeybinding("heathmap", gocui.KeyArrowLeft, gocui.ModNone, moveCursor(gui, 0, -1))
-	gui.g.SetKeybinding("heathmap", gocui.KeyArrowRight, gocui.ModNone, moveCursor(gui, 0, 1))
-	gui.g.SetKeybinding("heathmap", 'k', gocui.ModNone, moveCursor(gui, -1, 0))
-	gui.g.SetKeybinding("heathmap", 'j', gocui.ModNone, moveCursor(gui, 1, 0))
-	gui.g.SetKeybinding("heathmap", 'h', gocui.ModNone, moveCursor(gui, 0, -1))
-	gui.g.SetKeybinding("heathmap", 'l', gocui.ModNone, moveCursor(gui, 0, 1))
-	gui.g.SetKeybinding("heathmap", 'a', gocui.ModNone, gui.wrappedHandler(gui.ChainPanel.OpenChainPanel))
+	gui.g.SetKeybinding("heatmap", gocui.KeyArrowUp, gocui.ModNone, moveCursor(gui, -1, 0))
+	gui.g.SetKeybinding("heatmap", gocui.KeyArrowDown, gocui.ModNone, moveCursor(gui, 1, 0))
+	gui.g.SetKeybinding("heatmap", gocui.KeyArrowLeft, gocui.ModNone, moveCursor(gui, 0, -1))
+	gui.g.SetKeybinding("heatmap", gocui.KeyArrowRight, gocui.ModNone, moveCursor(gui, 0, 1))
+	gui.g.SetKeybinding("heatmap", 'k', gocui.ModNone, moveCursor(gui, -1, 0))
+	gui.g.SetKeybinding("heatmap", 'j', gocui.ModNone, moveCursor(gui, 1, 0))
+	gui.g.SetKeybinding("heatmap", 'h', gocui.ModNone, moveCursor(gui, 0, -1))
+	gui.g.SetKeybinding("heatmap", 'l', gocui.ModNone, moveCursor(gui, 0, 1))
+	gui.g.SetKeybinding("heatmap", 'a', gocui.ModNone, gui.wrappedHandler(gui.ChainPanel.OpenChainPanel))
 
 	err = gui.g.SetKeybinding("years", gocui.KeyEnter, gocui.ModNone, func(g *gocui.Gui, v *gocui.View) error {
 		selected := gui.YearsSelectList.GetSelected().option
 		gui.reInitGrid(selected)
-		gui.renderHeathmap()
+		gui.renderHeatmap()
 		return nil
 	})
 	if err != nil {
@@ -169,7 +169,7 @@ func (gui *Gui) layout(g *gocui.Gui) error {
 
 	gui.YearsSelectList.Render()
 
-	gui.renderHeathmap()
+	gui.renderHeatmap()
 	gui.g.SetViewOnTop("colors")
 	gui.renderVersion()
 	return nil
@@ -181,11 +181,11 @@ func (gui *Gui) renderVersion() {
 	fmt.Fprintf(gui.StatusView, "%s %s", gui.version, newVersionText)
 }
 
-func (gui *Gui) renderHeathmap() error {
-	v := gui.ViewHeathmap
+func (gui *Gui) renderHeatmap() error {
+	v := gui.ViewHeatmap
 	v.Clear()
 
-	months := utils.GetMonths(gui.heathmapLastDate)
+	months := utils.GetMonths(gui.heatmapLastDate)
 	for _, month := range months {
 		monthName := fmt.Sprintf("   %s   ", month.Format("Jan"))
 		fmt.Fprint(v, monthName)
@@ -252,7 +252,7 @@ func moveCursor(g *Gui, dy, dx int) func(*gocui.Gui, *gocui.View) error {
 		cursorX = newCursorX
 		cursorY = newCursorY
 
-		g.renderHeathmap()
+		g.renderHeatmap()
 
 		return nil
 	}
@@ -283,18 +283,18 @@ func (gui *Gui) initializeGrid() {
 	}
 	startDate = firstSunday
 
-	gui.heathmapFirstDate = today
-	gui.heathmapLastDate = startDate
+	gui.heatmapFirstDate = today
+	gui.heatmapLastDate = startDate
 
 	// Create the grid
-	grid = make([][]*HeathGrid, 7)
+	grid = make([][]*HeatGrid, 7)
 	for i := range grid {
-		grid[i] = make([]*HeathGrid, 53)
+		grid[i] = make([]*HeatGrid, 53)
 	}
 
 	defaultTheme := gui.Config.Gui.Theme.Selected
 	theme := gui.Config.Gui.Theme.ColorSchemes[defaultTheme]
-	heathmaps, _, err := gui.HabitService.HeatMap(context.Background(), startDate, today)
+	heatmaps, _, err := gui.HabitService.HeatMap(context.Background(), startDate, today)
 	if err != nil {
 		panic(err)
 	}
@@ -304,32 +304,32 @@ func (gui *Gui) initializeGrid() {
 	currentDate := startDate
 	for col := 0; col < 53; col++ {
 		for row := 0; row < 7; row++ {
-			heathGrid := &HeathGrid{
+			heatGrid := &HeatGrid{
 				row:    row,
 				column: col,
 				key:    currentDate,
 			}
 			if currentDate.After(today) {
 				// grid[row][col] = fmt.Sprintf("\x1b[48;5;52m%d \x1b[0m", currentDate.Day())
-				heathGrid.shade = theme.InvalidDayValue
+				heatGrid.shade = theme.InvalidDayValue
 			} else {
-				heathmap, ok := heathmaps[currentDate]
+				heatmap, ok := heatmaps[currentDate]
 				if ok {
-					shadeIndex := GetTheShade(heathmap)
-					heathGrid.rank = shadeIndex
+					shadeIndex := GetTheShade(heatmap)
+					heatGrid.rank = shadeIndex
 					colorCode, haveShade := theme.StatusValues[shadeIndex]
 					if !haveShade {
 						colorCode = theme.ZeroCompletedHabitValue
 					}
-					heathGrid.shade = colorCode
-					heathGrid.haveInfo = true
-					heathGrid.totalNumberOfHabits = heathmap.TotalNumberOfHabits
-					heathGrid.completedHabits = heathmap.CompletedHabits
+					heatGrid.shade = colorCode
+					heatGrid.haveInfo = true
+					heatGrid.totalNumberOfHabits = heatmap.TotalNumberOfHabits
+					heatGrid.completedHabits = heatmap.CompletedHabits
 				} else {
-					heathGrid.shade = theme.NoHabitsValue
+					heatGrid.shade = theme.NoHabitsValue
 				}
 			}
-			grid[row][col] = heathGrid
+			grid[row][col] = heatGrid
 			currentDate = currentDate.AddDate(0, 0, 1) // move to the next day
 		}
 	}
@@ -342,18 +342,18 @@ func (gui *Gui) initFromTo() {
 	from := utils.CreateDate(selectedYear, 1, 1)
 	to := utils.CreateDate(selectedYear, 12, 31)
 
-	gui.heathmapFirstDate = to
-	gui.heathmapLastDate = from
+	gui.heatmapFirstDate = to
+	gui.heatmapLastDate = from
 
 	// Create the grid
-	grid = make([][]*HeathGrid, 7)
+	grid = make([][]*HeatGrid, 7)
 	for i := range grid {
-		grid[i] = make([]*HeathGrid, 53)
+		grid[i] = make([]*HeatGrid, 53)
 	}
 
 	defaultTheme := gui.Config.Gui.Theme.Selected
 	theme := gui.Config.Gui.Theme.ColorSchemes[defaultTheme]
-	heathmaps, _, err := gui.HabitService.HeatMap(context.Background(), from, to)
+	heatmaps, _, err := gui.HabitService.HeatMap(context.Background(), from, to)
 	if err != nil {
 		panic(err)
 	}
@@ -365,37 +365,37 @@ func (gui *Gui) initFromTo() {
 	currentDate := from
 	for col := 0; col < 53; col++ {
 		for row := 0; row < 7; row++ {
-			heathGrid := &HeathGrid{
+			heatGrid := &HeatGrid{
 				row:    row,
 				column: col,
 				key:    currentDate,
 			}
 			if (col == 0 && startWeekday > row) || currentDate.Year() != from.Year() {
-				heathGrid.shade = theme.InvalidDayValue // not belongs to year, the january starts from the wednesday
-				heathGrid.key = time.Time{}
+				heatGrid.shade = theme.InvalidDayValue // not belongs to year, the january starts from the wednesday
+				heatGrid.key = time.Time{}
 			} else {
 				if currentDate.After(today) {
-					heathGrid.shade = theme.InvalidDayValue // the now is 2024 july 8, after this time all of them are null
+					heatGrid.shade = theme.InvalidDayValue // the now is 2024 july 8, after this time all of them are null
 				} else {
-					heathmap, ok := heathmaps[currentDate]
+					heatmap, ok := heatmaps[currentDate]
 					if ok {
-						shadeIndex := GetTheShade(heathmap)
-						heathGrid.rank = shadeIndex
+						shadeIndex := GetTheShade(heatmap)
+						heatGrid.rank = shadeIndex
 						colorCode, haveShade := theme.StatusValues[shadeIndex]
 						if !haveShade {
 							colorCode = theme.ZeroCompletedHabitValue
 						}
-						heathGrid.shade = colorCode
-						heathGrid.haveInfo = true
-						heathGrid.totalNumberOfHabits = heathmap.TotalNumberOfHabits
-						heathGrid.completedHabits = heathmap.CompletedHabits
+						heatGrid.shade = colorCode
+						heatGrid.haveInfo = true
+						heatGrid.totalNumberOfHabits = heatmap.TotalNumberOfHabits
+						heatGrid.completedHabits = heatmap.CompletedHabits
 					} else {
-						heathGrid.shade = theme.NoHabitsValue
+						heatGrid.shade = theme.NoHabitsValue
 					}
 				}
 				currentDate = currentDate.AddDate(0, 0, 1) // move to the next day
 			}
-			grid[row][col] = heathGrid
+			grid[row][col] = heatGrid
 		}
 	}
 }
@@ -414,12 +414,12 @@ func (gui *Gui) reInitGrid(selected string) error {
 	return nil
 }
 
-func GetTheShade(heathmap *models.HeathMap) int {
-	if heathmap.CompletedHabits == 0 {
+func GetTheShade(heatmap *models.HeatMap) int {
+	if heatmap.CompletedHabits == 0 {
 		return 0
 	}
 
-	completionRatio := float64(heathmap.CompletedHabits) / float64(heathmap.TotalNumberOfHabits)
+	completionRatio := float64(heatmap.CompletedHabits) / float64(heatmap.TotalNumberOfHabits)
 	shade := int(math.Round(completionRatio * 5))
 
 	if shade < 1 {
@@ -428,6 +428,6 @@ func GetTheShade(heathmap *models.HeathMap) int {
 	return shade
 }
 
-func (gui *Gui) GetDateFromHeathmapCursor() time.Time {
+func (gui *Gui) GetDateFromHeatmapCursor() time.Time {
 	return grid[cursorY][cursorX].key
 }

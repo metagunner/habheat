@@ -10,12 +10,12 @@ type GuiConfig struct {
 
 type ThemeConfig struct {
 	Selected            string                         `yaml:"selected"`
-	ColorSchemes        map[string]HeathmapColorScheme `yaml:"colorSchemes"`
+	ColorSchemes        map[string]HeatmapColorScheme `yaml:"colorSchemes"`
 	ActiveBorderColor   []string                       `yaml:"activeBorderColor"`
 	InactiveBorderColor []string                       `yaml:"inactiveBorderColor"`
 }
 
-type HeathmapColorScheme struct {
+type HeatmapColorScheme struct {
 	InvalidDayValue         string         `yaml:"invalidDayValue"`
 	NoHabitsValue           string         `yaml:"noHabitsValue"`
 	ZeroCompletedHabitValue string         `yaml:"zeroCompletedHabitValue"`
@@ -35,7 +35,7 @@ func GetDefaultConfig() *UserConfig {
 				ActiveBorderColor:               []string{"green", "bold"},
 				InactiveBorderColor:             []string{"default"},
 				Selected:                        "green",
-				ColorSchemes: map[string]HeathmapColorScheme{
+				ColorSchemes: map[string]HeatmapColorScheme{
 					"green": {
 						InvalidDayValue: "  ", NoHabitsValue: "  ", ZeroCompletedHabitValue: "  ", StatusValues: map[int]string{
 							1: "\033[48;5;22m" + space + end,

@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/metagunner/habheath/pkg/app"
+	"github.com/metagunner/habheat/pkg/app"
 )
 
 var ErrInvalidHabitTitle = app.Errorf(app.EINVALID, "Invalid habit title.")
@@ -61,8 +61,8 @@ func (h *Habit) ChangeTitle(title string) error {
 }
 
 type HabitService interface {
-	// All the habits for heath map
-	HeatMap(ctx context.Context, from time.Time, to time.Time) (map[time.Time]*HeathMap, int, error)
+	// All the habits for heat map
+	HeatMap(ctx context.Context, from time.Time, to time.Time) (map[time.Time]*HeatMap, int, error)
 	// Get all the habits for the given day
 	GetAllByDay(ctx context.Context, day time.Time) (*Chain, error)
 	Create(ctx context.Context, habit *Habit) error
@@ -76,7 +76,7 @@ type Chain struct {
 	Habits []*Habit
 }
 
-type HeathMap struct {
+type HeatMap struct {
 	TotalNumberOfHabits int
 	CompletedHabits     int
 	Day                 int

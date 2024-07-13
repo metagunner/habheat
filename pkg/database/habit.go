@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/metagunner/habheath/pkg/app"
-	"github.com/metagunner/habheath/pkg/models"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/app"
+	"github.com/metagunner/habheat/pkg/models"
+	"github.com/metagunner/habheat/pkg/utils"
 )
 
 var ErrHabitNotFound = app.Errorf(app.ENOTFOUND, "Habit not found.")
@@ -24,8 +24,8 @@ func NewHabitService(db *DB) models.HabitService {
 // Compile-time check to ensure HabitServiceImpl implements ChainService
 var _ models.HabitService = (*HabitServiceImpl)(nil)
 
-func (s *HabitServiceImpl) HeatMap(ctx context.Context, from time.Time, to time.Time) (map[time.Time]*models.HeathMap, int, error) {
-	const getHeathMapQuery = `
+func (s *HabitServiceImpl) HeatMap(ctx context.Context, from time.Time, to time.Time) (map[time.Time]*models.HeatMap, int, error) {
+	const getHeatMapQuery = `
 		SELECT 
 			COUNT(*) AS total_number_of_habits,
 			SUM(CASE WHEN is_completed = 1 THEN 1 ELSE 0 END) AS completed_habits,
@@ -41,14 +41,14 @@ func (s *HabitServiceImpl) HeatMap(ctx context.Context, from time.Time, to time.
 
 	fromQuery := from.UTC().Format(time.RFC3339)
 	toQuery := to.UTC().Format(time.RFC3339)
-	rows, err := s.db.db.QueryContext(ctx, getHeathMapQuery, fromQuery, toQuery)
+	rows, err := s.db.db.QueryContext(ctx, getHeatMapQuery, fromQuery, toQuery)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	result := make(map[time.Time]*models.HeathMap, 0)
+	result := make(map[time.Time]*models.HeatMap, 0)
 	for rows.Next() {
-		var h models.HeathMap
+		var h models.HeatMap
 		var day string
 		var month string
 		var year string

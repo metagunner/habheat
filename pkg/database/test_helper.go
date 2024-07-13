@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/metagunner/habheath/pkg/models"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/models"
+	"github.com/metagunner/habheat/pkg/utils"
 )
 
 func SetupTestDB() (*DB, error) {

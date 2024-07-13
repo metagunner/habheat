@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/jesseduffield/gocui"
-	"github.com/metagunner/habheath/pkg/utils"
+	"github.com/metagunner/habheat/pkg/utils"
 	"github.com/samber/lo"
 )
 
@@ -59,15 +59,15 @@ func (gui *Gui) createAllViews() error {
 	gui.YearsSelectList = NewSelectList(gui, yearsV, getDisplayStrings)
 	gui.YearsSelectList.view.Highlight = true
 
-	heathmapV, err := gui.g.SetView("heathmap", 11, 0, maxX-1, maxY-4, 0)
+	heatmapV, err := gui.g.SetView("heatmap", 11, 0, maxX-1, maxY-4, 0)
 	if err != nil && !gocui.IsUnknownView(err) {
 		return err
 	}
-	heathmapV.Title = "Habheath"
-	heathmapV.FrameRunes = roundedFrameRunes
-	heathmapV.TitlePrefix = "2"
+	heatmapV.Title = "Habheat"
+	heatmapV.FrameRunes = roundedFrameRunes
+	heatmapV.TitlePrefix = "2"
 
-	gui.ViewHeathmap = heathmapV
+	gui.ViewHeatmap = heatmapV
 
 	colorsV, err := gui.g.SetView("colors", maxX-23, 0, maxX-2, 2, 0)
 	if err != nil && !gocui.IsUnknownView(err) {

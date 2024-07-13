@@ -11,9 +11,9 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/jesseduffield/gocui"
-	"github.com/metagunner/habheath/pkg/config"
-	"github.com/metagunner/habheath/pkg/database"
-	"github.com/metagunner/habheath/pkg/gui"
+	"github.com/metagunner/habheat/pkg/config"
+	"github.com/metagunner/habheat/pkg/database"
+	"github.com/metagunner/habheat/pkg/gui"
 	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
@@ -35,7 +35,7 @@ func main() {
 		panic(err)
 	}
 
-	// HeathmapGrid()
+	// HeatmapGrid()
 	dbPath := filepath.Join(configDir, "test.db")
 	db := database.NewDB(dbPath)
 	if err := db.Open(); err != nil {
@@ -83,17 +83,17 @@ func loadUserConfig(configFilePath string, base *config.UserConfig) (*config.Use
 }
 
 func findOrCreateConfigDir() (string, error) {
-	// look for habheath/filename in XDG_CONFIG_HOME and XDG_CONFIG_DIRS
-	configFilepath, err := xdg.SearchConfigFile(filepath.Join("habheath", "config.yml"))
+	// look for habheat/filename in XDG_CONFIG_HOME and XDG_CONFIG_DIRS
+	configFilepath, err := xdg.SearchConfigFile(filepath.Join("habheat", "config.yml"))
 	if err != nil {
-		configFilepath = filepath.Join(xdg.ConfigHome, "habheath", "config.yml")
+		configFilepath = filepath.Join(xdg.ConfigHome, "habheat", "config.yml")
 	}
 
 	folder := filepath.Dir(configFilepath)
 	return folder, os.MkdirAll(folder, 0o755)
 }
 
-// The version is baked into the habheath binary via LDFLAG argument.
+// The version is baked into the habheat binary via LDFLAG argument.
 // If there is no version provided we use the Go built-in function to get build version, it is a git commit hash.
 func checkVersion() {
 	// Version has already been set by the build flags
@@ -125,8 +125,8 @@ func generateYamlFile() {
 	_ = enc.Encode(config.GetDefaultConfig())
 }
 
-// just to visualize and test heathmap
-func HeathmapGrid() {
+// just to visualize and test habheat
+func HeatmapGrid() {
 	// Get today's date
 	today := time.Now().UTC()
 

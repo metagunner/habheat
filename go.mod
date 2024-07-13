@@ -1,4 +1,4 @@
-module github.com/metagunner/habheath
+module github.com/metagunner/habheat
 
 go 1.22.2
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/metagunner/habheath/pkg/models"
+	"github.com/metagunner/habheat/pkg/models"
 	"github.com/stretchr/testify/assert"
 )
 

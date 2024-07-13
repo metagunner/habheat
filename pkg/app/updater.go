@@ -21,7 +21,7 @@ func CheckForNewUpdate(version string) bool {
 }
 
 func getLatestVersionNumber() (string, error) {
-	req, err := http.NewRequest("GET", "https://github.com/metagunner/habheath/releases/latest", nil)
+	req, err := http.NewRequest("GET", "https://github.com/metagunner/habheat/releases/latest", nil)
 	if err != nil {
 		return "", err
 	}
