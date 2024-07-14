@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 
 	"github.com/adrg/xdg"
@@ -101,10 +102,14 @@ func checkVersion() {
 
 	version = "unversioned"
 
-	// goBuildInfo, ok := debug.ReadBuildInfo()
-	// if !ok {
-	// 	return
-	// }
+	goBuildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		return
+	}
+
+	if goBuildInfo.Main.Version != "" {
+		version = goBuildInfo.Main.Version
+	}
 
 	// revision, ok := lo.Find(goBuildInfo.Settings, func(setting debug.BuildSetting) bool {
 	// 	return setting.Key == "vcs.revision"
