@@ -13,8 +13,8 @@ A simple terminal UI for habit tracking with Github like heat map.
     - [Update Habit](#update-habit)
 - [Installation](#installation)
   - [Binary Releases](#binary-releases)
+  - [Homebrew](#homebrew)
   - [Go](#go)
-  - [Manual](#manual)
 - [Usage](#usage)
 - [Configuration](#configuration)
   - [Custom Theme](#custom-theme)
@@ -24,6 +24,8 @@ A simple terminal UI for habit tracking with Github like heat map.
     - [Heathmap Grid Keybindings](#heatmap-grid-keybindings)
 
 ## Features
+
+All data used by this application is stored locally on your device.
 
 ### Year Selection
 Press `space` to select the year. The `Default` option shows 12 months starting today and going backwards. For example, for *July 13 2024*, the grid will show 53 weeks starting from the current week to the 2023.
@@ -48,22 +50,19 @@ Press `u` on a habit to edit its title.
 ### Binary Releases
 For Windows, Mac OS(10.12+) or Linux, you can download a binary release [here](https://github.com/metagunner/habheat/releases).
 
+### Homebrew
+The latest binary release can be installed with Homebrew:
+```sh
+$ brew install metagunner/habheat/habheat
+$ brew install habheat
+```
+
 ### Go
 ```sh
 go install github.com/metagunner/habheat@latest
 ```
 
-### Manual
-
-You'll need to [install Go](https://golang.org/doc/install)
-
-```
-git clone https://github.com/metagunner/habheat.git
-cd habheat
-go install
-```
-
-You can also use `go run main.go` to run the application.
+Building requires a working golang installation, a properly set `GOPATH`, and `$GOPATH/bin` present in `$PATH`. It is also **required** to have C/C++ compiler installed (gcc/clang) as there are C dependencies in use ([mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)).
 
 ## Usage
 Call `habheat` in your terminal.
