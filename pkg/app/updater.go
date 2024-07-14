@@ -2,7 +2,6 @@ package app
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -11,8 +10,8 @@ func CheckForNewUpdate(version string) bool {
 		return false
 	}
 	newVersion, _ := getLatestVersionNumber()
-	currentVersion := fmt.Sprintf("v%s", version)
-	return currentVersion != newVersion
+	// currentVersion := fmt.Sprintf("v%s", version)
+	return version != newVersion
 }
 
 func getLatestVersionNumber() (string, error) {
