@@ -33,3 +33,5 @@ test.db
 # Go workspace file
 go.work
 go.work.sum
+
+dist/
