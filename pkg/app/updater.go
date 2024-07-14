@@ -7,17 +7,12 @@ import (
 )
 
 func CheckForNewUpdate(version string) bool {
+	if version == "unversioned" {
+		return false
+	}
+	newVersion, _ := getLatestVersionNumber()
 	currentVersion := fmt.Sprintf("v%s", version)
-	newVersion, err := getLatestVersionNumber()
-	if err != nil {
-		return false
-	}
-
-	if currentVersion == newVersion {
-		return false
-	}
-
-	return true
+	return currentVersion != newVersion
 }
 
 func getLatestVersionNumber() (string, error) {

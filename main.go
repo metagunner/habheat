@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"runtime/debug"
 	"time"
 
 	"github.com/adrg/xdg"
@@ -14,7 +13,6 @@ import (
 	"github.com/metagunner/habheat/pkg/config"
 	"github.com/metagunner/habheat/pkg/database"
 	"github.com/metagunner/habheat/pkg/gui"
-	"github.com/samber/lo"
 	"gopkg.in/yaml.v3"
 )
 
@@ -101,18 +99,20 @@ func checkVersion() {
 		return
 	}
 
-	goBuildInfo, ok := debug.ReadBuildInfo()
-	if !ok {
-		return
-	}
+	version = "unversioned"
 
-	revision, ok := lo.Find(goBuildInfo.Settings, func(setting debug.BuildSetting) bool {
-		return setting.Key == "vcs.revision"
-	})
-	if ok {
-		// if built from source show the commit hash
-		version = revision.Value
-	}
+	// goBuildInfo, ok := debug.ReadBuildInfo()
+	// if !ok {
+	// 	return
+	// }
+
+	// revision, ok := lo.Find(goBuildInfo.Settings, func(setting debug.BuildSetting) bool {
+	// 	return setting.Key == "vcs.revision"
+	// })
+	// if ok {
+	// 	// if built from source show the commit hash
+	// 	version = revision.Value
+	// }
 }
 
 // Generate yaml file with default user config values. Used for the documentation
