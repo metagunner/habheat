@@ -188,10 +188,6 @@ func (self *ChainPanelContext) UpdateHabit() error {
 }
 
 func (self *ChainPanelContext) AddHabit() error {
-	selected := self.viewModel.list.GetSelected()
-	if selected == (SelectItem{}) {
-		return nil
-	}
 
 	onConfirm := func(newtitle string) error {
 		title, err := models.CreateHabitTitle(newtitle)
