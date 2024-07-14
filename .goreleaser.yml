@@ -110,8 +110,10 @@ changelog:
   sort: asc
 brews:
   -
+    directory: ""
+
     # Repository to push the tap to.
-    tap:
+    repository:
       owner: metagunner
       name: homebrew-habheat
 
@@ -122,6 +124,8 @@ brews:
     # Your app's description.
     # Default is empty.
     description: 'A simple terminal UI for habit tracking with Github like heat map, written in Go'
+
+    url_template: "https://github.com/metagunner/habheat/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 
     # # Packages your package depends on.
     # dependencies:
